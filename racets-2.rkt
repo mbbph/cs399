@@ -1,6 +1,6 @@
 ;2020 Lisa Hou
-;Bryn Mawr College CS 399 Senior Thesis
-;Based on code from Micinski et al (2018) and Ian Fisher (2019)
+;Bryn Mawr College CS 399 Senior Thesis Codebase
+;Based on code from Micinski et al (2018) and Felleisen (2011)
 
 #lang racket
 (require "facets.rkt" (for-syntax "facets.rkt"))
@@ -146,13 +146,14 @@
 ;module-begin
 ;Expands all macros before transforming
 (define-syntax (module-begin stx)
-  (syntax-case stx ()
+  (syntax-parse stx
     [(_ forms ...)
-     (let ([expanded (local-expand #'(#%plain-module-begin forms ...) 'module-begin '())])
-       (transform expanded))]))
+     (with-syntax ([expanded
+                    (local-expand #'(#%plain-module-begin forms ...) 'module-begin '())])
+       (transform #'expanded))]))
 
 
-;transform
+;
 (begin-for-syntax
   (define (transform stx)
     (syntax-case stx (t-quote-syntax)
